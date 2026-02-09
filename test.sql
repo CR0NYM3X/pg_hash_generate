@@ -89,11 +89,11 @@ PGPASSWORD='password123' psql -h 127.0.0.1 -p 5432 -d postgres -U user_test
 ---------------------- Validar -----------------------
 
 
-select * from public.pg_verify_scram_sha256('password123', 'SCRAM-SHA-256$10000:BfjFRQ5cJh8ORscTYOuwuQ==$5a5hkxA6mouSmmCl4m0yd/klStxHVBLp8dLTPbRwLj4=:VuswwU3Muvs2p1q0Oxu7P7rhk+uaG16oc9ZNPS6qfBg='); -- validacion correcta 
-select * from public.pg_verify_scram_sha256('password123', 'SCRAM-SHA-256$1000:BfjFRQ5cJh8ORscTYOuwuq==$5a5hkxA6mouSmmCl4m0yd/klStxHVBLp8dLTPbRwLj4=:VuswwU3Muvs2p1q0Oxu7P7rhk+uaG16oc9ZNPS6qfBg='); -- validacion la iteracion
-select * from public.pg_verify_scram_sha256('password123', 'SCRAM-SHA-256$10000:BfjFRQ5cJh8ORscTYOuwuq==$5a5hkxA6mouSmmCl4m0yd/klStxHVBLp8dLTPbRwLj4=:VuswwU3Muvs2p1q0Oxu7P7rhk+uaG16oc9ZNPS6qfBg='); -- validacion salt
-select * from public.pg_verify_scram_sha256('password123', 'SCRAM-SHA-256$10000:BfjFRQ5cJh8ORscTYOuwuQ==$5a5hkxA6mouSmmCl4m0yd/klStxHVBLp8dLTPbRwLj5=:VuswwU3Muvs2p1q0Oxu7P7rhk+uaG16oc9ZNPS6qfBg='); -- Cambianto el StoredKey
-select * from public.pg_verify_scram_sha256('password123', 'SCRAM-SHA-256$10000:BfjFRQ5cJh8ORscTYOuwuQ==$5a5hkxA6mouSmmCl4m0yd/klStxHVBLp8dLTPbRwLj4=:VuswwU3Muvs2p1q0Oxu7P7rhk+uaG16oc9ZNPS6qfBG='); -- Cambianto el  ServerKey
+select * from public.pg_scram_sha256_verify('password123', 'SCRAM-SHA-256$10000:BfjFRQ5cJh8ORscTYOuwuQ==$5a5hkxA6mouSmmCl4m0yd/klStxHVBLp8dLTPbRwLj4=:VuswwU3Muvs2p1q0Oxu7P7rhk+uaG16oc9ZNPS6qfBg='); -- validacion correcta 
+select * from public.pg_scram_sha256_verify('password123', 'SCRAM-SHA-256$1000:BfjFRQ5cJh8ORscTYOuwuq==$5a5hkxA6mouSmmCl4m0yd/klStxHVBLp8dLTPbRwLj4=:VuswwU3Muvs2p1q0Oxu7P7rhk+uaG16oc9ZNPS6qfBg='); -- validacion la iteracion
+select * from public.pg_scram_sha256_verify('password123', 'SCRAM-SHA-256$10000:BfjFRQ5cJh8ORscTYOuwuq==$5a5hkxA6mouSmmCl4m0yd/klStxHVBLp8dLTPbRwLj4=:VuswwU3Muvs2p1q0Oxu7P7rhk+uaG16oc9ZNPS6qfBg='); -- validacion salt
+select * from public.pg_scram_sha256_verify('password123', 'SCRAM-SHA-256$10000:BfjFRQ5cJh8ORscTYOuwuQ==$5a5hkxA6mouSmmCl4m0yd/klStxHVBLp8dLTPbRwLj5=:VuswwU3Muvs2p1q0Oxu7P7rhk+uaG16oc9ZNPS6qfBg='); -- Cambianto el StoredKey
+select * from public.pg_scram_sha256_verify('password123', 'SCRAM-SHA-256$10000:BfjFRQ5cJh8ORscTYOuwuQ==$5a5hkxA6mouSmmCl4m0yd/klStxHVBLp8dLTPbRwLj4=:VuswwU3Muvs2p1q0Oxu7P7rhk+uaG16oc9ZNPS6qfBG='); -- Cambianto el  ServerKey
 
 
 
