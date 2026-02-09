@@ -88,18 +88,18 @@ SELECT * FROM public.fn_util_generate_scram_sha256('password123', 10000);
 
 ```sql
 -- Retornará 't' solo si el hash es íntegro y la clave es correcta
-select * from public.pg_verify_scram_sha256(
+select * from public.pg_scram_sha256_verify(
   'password123',
   'SCRAM-SHA-256$10000:BfjFRQ5cJh8ORscTYOuwuQ==$5a5hkxA6mouSmmCl4m0yd/klStxHVBLp8dLTPbRwLj4=:VuswwU3Muvs2p1q0Oxu7P7rhk+uaG16oc9ZNPS6qfBg='); -- validacion correcta 
 
 
-SELECT usename,public.pg_verify_scram_sha256('123123' , passwd )  
+SELECT usename,public.pg_scram_sha256_verify('123123' , passwd )  
 FROM pg_shadow 
 where usename in('user_test', 'test' , 'postgres') 
 order by 2 desc;
 
 +-----------+------------------------+
-|  usename  | pg_verify_scram_sha256 |
+|  usename  | pg_scram_sha256_verify |
 +-----------+------------------------+
 | user_test | t                      |
 | postgres  | f                      |
