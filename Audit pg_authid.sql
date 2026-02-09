@@ -60,14 +60,13 @@ END $auditoria_seguridad$;
 
 
 
-
 SELECT 
-    a.rolname AS usuario_vulnerable,
-    d.password_test AS contraseña_detectada,
-    'CRÍTICO' AS nivel_riesgo
+    a.rolname AS vulnerable_user,
+    d.password_test AS detected_password,
+    'CRITICAL' AS risk_level
 FROM pg_authid a
 CROSS JOIN (
-    -- Generamos el diccionario al vuelo como una tabla virtual
+    -- Generate an on-the-fly virtual table with the top 20 weak passwords
     SELECT unnest(ARRAY[
         '123456', 'password', '123456789', '12345', '12345678', 
         'qwerty', '111111', '123123', 'admin', 'p@ssword', 
@@ -77,7 +76,7 @@ CROSS JOIN (
 ) d
 WHERE a.rolpassword IS NOT NULL 
   AND a.rolpassword LIKE 'SCRAM-SHA-256$%'
-  -- Invocamos tu función de validación
+  -- Invoke your custom validation function
   AND public.pg_scram_sha256_verify(d.password_test, a.rolpassword) = TRUE;
 
 
