@@ -131,6 +131,6 @@ $func$;
 -- Seguridad: Fija search_path
 ALTER FUNCTION public.pg_scram_sha256_generate(text, integer) SET search_path TO public, pg_temp;
 
-REVOKE EXECUTE ON FUNCTION public.fn_util_generate_scram_sha256(text, integer) FROM PUBLIC;
--- REVOKE EXECUTE ON FUNCTION public.fn_util_verify_scram_sha256(text, text) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.pg_scram_sha256_generate(text, integer) FROM PUBLIC;
+ 
 
