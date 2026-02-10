@@ -14,14 +14,7 @@
  @Author: CR0NYM3X
 */
 
-
----------------- COMMENT ----------------
-COMMENT ON FUNCTION public.pg_scram_sha256_verify(text, text) IS
-'Verifica contraseñas contra hashes SCRAM-SHA-256.
-- Parámetros: p_password (input), p_stored_hash (hash de la DB).
-- Retorno: boolean.
-- Seguridad: SECURITY INVOKER.
-- Notas: Extrae automáticamente salt e iteraciones del hash.';
+create EXTENSION pgcrypto ;
 
 -- DROP FUNCTION public.pg_scram_sha256_verify(text, text);
 CREATE OR REPLACE FUNCTION public.pg_scram_sha256_verify(
@@ -94,6 +87,16 @@ EXCEPTION
     WHEN OTHERS THEN RETURN FALSE;
 END;
 $func$;
+
+
+---------------- COMMENT ----------------
+COMMENT ON FUNCTION public.pg_scram_sha256_verify(text, text) IS
+'Verifica contraseñas contra hashes SCRAM-SHA-256.
+- Parámetros: p_password (input), p_stored_hash (hash de la DB).
+- Retorno: boolean.
+- Seguridad: SECURITY INVOKER.
+- Notas: Extrae automáticamente salt e iteraciones del hash.';
+
 
 ALTER FUNCTION public.pg_scram_sha256_verify(text, text) SET search_path TO public, pg_temp;
 
