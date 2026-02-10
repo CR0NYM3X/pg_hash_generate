@@ -200,6 +200,30 @@ Time: 13065.403 ms (00:13.065)
 
  
 
+## ✅ Características Principales
+
+- ✅ **Implementación correcta de PBKDF2** con HMAC-SHA256
+- ✅ **Salt aleatorio de 16 bytes** (128 bits) en cada generación
+- ✅ **4096 iteraciones por defecto** (configurable)
+- ✅ **Formato exacto de PostgreSQL**: `SCRAM-SHA-256$iter:salt$stored:server`
+- ✅ **XOR correcto** de iteraciones en PBKDF2
+- ✅ **StoredKey = H(ClientKey)** según RFC 7677
+- ✅ **Base64 limpio** sin saltos de línea
+- ✅ **Validaciones de entrada** (NULL, vacío, rangos)
+- ✅ **Compatible con todas las versiones** de PostgreSQL que soportan pgcrypto
+
+
+
+### Referencias
+
+- [RFC 7677](https://datatracker.ietf.org/doc/html/rfc7677) - SCRAM-SHA-256
+- [RFC 5802](https://datatracker.ietf.org/doc/html/rfc5802) - SCRAM
+- [RFC 2898](https://datatracker.ietf.org/doc/html/rfc2898) - PBKDF2
+- [PostgreSQL Password Authentication](https://www.postgresql.org/docs/current/auth-password.html)
+
+
+
+
 ---
 
 **Mantenido por:** `CR0NYM3X` | **Versión:** 1.0.0 (2026)
