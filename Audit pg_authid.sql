@@ -1,83 +1,52 @@
------------------------- OPCION #1 ------------------------
-
-
-DO $auditoria_seguridad$
-DECLARE
-    -- Listado de las 20 contraseñas más débiles
-    v_diccionario text[] := ARRAY[
-        '123456', 'password', '123456789', '12345', '12345678', 
-        'qwerty', '111111', '123123', 'admin', 'p@ssword', 
-        'welcome', 'abc123', 'login', 'secret', 'asdfgh', 
-        '1234567', 'monkey', 'dragon', 'football', 'quertyuiop'
-    ];
-    
-    v_usuario     record;
-    v_pass_debil  text;
-    v_es_valida   boolean;
-    v_hallazgos   integer := 0;
-BEGIN
-    RAISE NOTICE '========== INICIANDO AUDITORÍA DE CONTRASEÑAS ==========';
-    RAISE NOTICE 'Revisando usuarios contra el Top 20 de contraseñas débiles...';
-    RAISE NOTICE '--------------------------------------------------------';
-
-    -- 1. Iterar sobre todos los roles que tienen una contraseña definida
-    FOR v_usuario IN 
-        SELECT rolname, rolpassword 
-        FROM pg_authid 
-        WHERE rolpassword IS NOT NULL 
-          AND rolpassword LIKE 'SCRAM-SHA-256$%'
-    LOOP
-        -- 2. Probar cada contraseña del diccionario contra el hash del usuario
-        FOREACH v_pass_debil IN ARRAY v_diccionario
-        LOOP
-            -- Usamos nuestra función de validación estricta
-            v_es_valida := public.pg_scram_sha256_verify(v_pass_debil, v_usuario.rolpassword);
-            
-            IF v_es_valida THEN
-                RAISE WARNING 'RIESGO DETECTADO: El usuario "%" utiliza la contraseña débil: "%"', 
-                              v_usuario.rolname, v_pass_debil;
-                v_hallazgos := v_hallazgos + 1;
-            END IF;
-        END LOOP;
-    END LOOP;
-
-    -- 3. Reporte Final
-    RAISE NOTICE '--------------------------------------------------------';
-    IF v_hallazgos = 0 THEN
-        RAISE NOTICE 'AUDITORÍA FINALIZADA: No se encontraron vulnerabilidades.';
-    ELSE
-        RAISE WARNING 'AUDITORÍA FINALIZADA: Se encontraron % vulnerabilidades.', v_hallazgos;
-    END IF;
-    RAISE NOTICE '========================================================';
-
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE EXCEPTION 'ERROR DURANTE AUDITORÍA: %', SQLERRM;
-END $auditoria_seguridad$;
-
-
------------------------- OPCION #2 ------------------------
-
-
-
-SELECT 
-    a.rolname AS vulnerable_user,
-    d.password_test AS detected_password,
-    'CRITICAL' AS risk_level
-FROM pg_authid a
-CROSS JOIN (
-    -- Generate an on-the-fly virtual table with the top 20 weak passwords
+WITH weak_passwords_dictionary AS (
+    -- 1. Diccionario Estático (Secuencias, Corporativas, Teclado, Diccionario)
     SELECT unnest(ARRAY[
-        '123456', 'password', '123456789', '12345', '12345678', 
-        'qwerty', '111111', '123123', 'admin', 'p@ssword', 
-        'welcome', 'abc123', 'login', 'secret', 'asdfgh', 
-        '1234567', 'monkey', 'dragon', 'football', 'quertyuiop'
-    ]) AS password_test
-) d
-WHERE a.rolpassword IS NOT NULL 
-  AND a.rolpassword LIKE 'SCRAM-SHA-256$%'
-  -- Invoke your custom validation function
-  AND public.pg_scram_sha256_verify(d.password_test, a.rolpassword) = TRUE;
+        -- Secuencias y Repeticiones
+        '123','1234','12345','123456','1234567','12345678','123456789','1234567890','0000','00000','1111', '111111' ,'123123','654321','55555',
+        -- Corporativas y Defecto
+        'admin','administrator','password','p@ssword','root','support','guest','user','login','welcome',
+        'postgres','sysadmin','password123','superbowl 123','temporal','cambiar01','P4ssw0rd','4dm1n',
+        -- Teclado
+        'qwerty','asdfgh','zxcvbnm','qazwsx','poiuyt','1q2w3e','qwertyuiop','asdfghjkl','asdasd',
+        -- Diccionario Común
+        'monkey','dragon','football','soccer','starwars','superman','batman','charlie','shadow','login', 'secret', 'quertyuiop', 'welcome', 'abc123',
+        -- Fechas
+        '2022','2023','2024','2025','2026'
+    ]) AS test_password
+    
+    UNION
+    
+    -- 2. Diccionario Dinámico (Serie superbowl 1990 - superbowl 2026)
+    SELECT 'superbowl ' || year_val FROM generate_series(1990, 2026) AS year_val
+    
+    UNION
+    
+    -- 3. Diccionario Dinámico (Serie superbowl 1990 - superbowl 2026)
+    SELECT 'superbowl ' || year_val FROM generate_series(1990, 2026) AS year_val
+)
+SELECT 
+    a.rolname AS username,
+    CASE 
+        WHEN a.rolpassword LIKE 'SCRAM-SHA-256$%' THEN 'SCRAM-SHA-256'
+        WHEN a.rolpassword LIKE 'md5%' THEN 'MD5'
+        ELSE 'Unknown/Other'
+    END AS algorithm_type,
+    d.test_password AS detected_password,
+    CASE 
+        WHEN a.rolsuper THEN 'CRITICAL'
+        ELSE 'HIGH'
+    END AS risk_level
+FROM pg_authid a
+CROSS JOIN weak_passwords_dictionary d
+WHERE a.rolpassword IS NOT NULL
+  AND (
+    -- Caso 1: Si es SCRAM, usa pg_scram_sha256_verify
+    (a.rolpassword LIKE 'SCRAM-SHA-256$%' AND public.pg_scram_sha256_verify(d.test_password, a.rolpassword))
+    OR
+    --Caso 2: Si es MD5, usa pg_md5_verify (requiere username para el salt)
+    (a.rolpassword LIKE 'md5%' AND public.pg_md5_verify(a.rolname, d.test_password, a.rolpassword))
+  )
+ORDER BY a.rolsuper DESC, a.rolname ASC;
 
 
 
