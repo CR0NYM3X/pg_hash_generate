@@ -30,7 +30,7 @@ donde hash_hexadecimal = md5(password + username)
 
 
 
- 
+ -- DROP  FUNCTION public.pg_md5_generate(text,text);
 CREATE OR REPLACE FUNCTION public.pg_md5_generate(
     p_username text,
     p_password text
@@ -83,7 +83,7 @@ ALTER FUNCTION public.pg_md5_generate(text, text) SET search_path TO public, pg_
 ---------------- SECURITY REVOKE ----------------
 REVOKE EXECUTE ON FUNCTION public.pg_md5_generate(text, text) FROM PUBLIC;
 
-
--- SELECT * from public.pg_md5_generate( 'user_test', 'password123') AS hash_md5; -> md5a55cc73725a729b561ecfc4984d922a9
+ 
+-- SELECT * from public.pg_md5_generate( 'user_test', 'password123') AS hash_md5; --> md5a55cc73725a729b561ecfc4984d922a9
 
 
