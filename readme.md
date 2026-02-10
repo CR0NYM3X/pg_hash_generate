@@ -1,18 +1,19 @@
 
-# 🔐 PostgreSQL SCRAM-SHA-256 Toolkit
+# 🔐 pg_hash_generate Toolkit
 
-Una suite de funciones robustas en PL/pgSQL para generar y validar hashes de contraseñas bajo el estándar SCRAM-SHA-256 (RFC 7677) y MD5. Ideal para sistemas que requieren gestionar autenticación personalizada o migraciones seguras de usuarios.
+Una suite de funciones robustas en PL/pgSQL para generar y validar hashes de contraseñas bajo el estándar SCRAM-SHA-256 (RFC 7677) y MD5. Ideal para sistemas que requieren gestionar autenticación personalizada o migraciones seguras de usuarios o realizar auditorias internas utilizando diccionarios personalizados.
 
 ---
 
-## 🧠 ¿Qué es SCRAM-SHA-256?
+##  ¿Qué es SCRAM-SHA-256?
 
 **Salted Challenge Response Authentication Mechanism (SCRAM)** es el estándar de oro actual para la autenticación en PostgreSQL. A diferencia de MD5, SCRAM ofrece una resistencia superior contra ataques de fuerza bruta y de diccionario,  un factor de costo (iteraciones) y una verificación de mutua confianza entre el cliente y el servidor.
 
-### 🏗️ Anatomía del Hash
+### 🛡️ 1. SCRAM-SHA-256 (Recomendado)
 
 El hash generado por este proyecto es compatible con el formato interno de PostgreSQL:
 
+#### 🏗️ Anatomía del Hash SCRAM
 `SCRAM-SHA-256$ <Iteraciones> : <Salt> $ <StoredKey> : <ServerKey>`
 
 
@@ -24,7 +25,21 @@ El hash generado por este proyecto es compatible con el formato interno de Postg
 | **ServerKey** | Permite al cliente verificar que el servidor realmente conoce la clave (Autenticación mutua). |
 
 
-`MD5 || password || username`
+## 📜 2. MD5 (Legacy)
+
+Es el método de autenticación clásico de PostgreSQL (versiones 13 y anteriores). Aunque es más rápido, es menos seguro que SCRAM frente a ataques modernos debido a la falta de un factor de costo ajustable.
+
+#### 🏗️ Anatomía del Hash MD5
+
+PostgreSQL utiliza una implementación específica que combina la contraseña con el nombre de usuario como una "sal" (salt) básica:
+
+`md5 || md5( password || username )`
+
+| Componente | Función |
+| --- | --- |
+| **Prefijo `md5`** | Identificador de cadena que indica a PostgreSQL el tipo de algoritmo. |
+| **Username** | Se utiliza como sal dinámica; si el usuario cambia de nombre, el hash deja de ser válido. |
+| **password** | es la palabra que se utilizara como contraseña. |
 
 --- 
 
