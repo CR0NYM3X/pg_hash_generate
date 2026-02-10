@@ -1,7 +1,7 @@
 
 # 🔐 PostgreSQL SCRAM-SHA-256 Toolkit
 
-Una suite de funciones robustas en PL/pgSQL para generar y validar hashes de contraseñas bajo el estándar SCRAM-SHA-256 (RFC 7677). Ideal para sistemas que requieren gestionar autenticación personalizada o migraciones seguras de usuarios.
+Una suite de funciones robustas en PL/pgSQL para generar y validar hashes de contraseñas bajo el estándar SCRAM-SHA-256 (RFC 7677) y MD5. Ideal para sistemas que requieren gestionar autenticación personalizada o migraciones seguras de usuarios.
 
 ---
 
@@ -15,6 +15,7 @@ El hash generado por este proyecto es compatible con el formato interno de Postg
 
 `SCRAM-SHA-256$ <Iteraciones> : <Salt> $ <StoredKey> : <ServerKey>`
 
+
 | Componente | Función |
 | --- | --- |
 | **Iteraciones** | El factor de costo (PBKDF2). A mayor número, más lento el ataque de fuerza bruta. |
@@ -22,6 +23,8 @@ El hash generado por este proyecto es compatible con el formato interno de Postg
 | **StoredKey** | Hash derivado de la clave del cliente; es lo que se compara para validar el acceso. |
 | **ServerKey** | Permite al cliente verificar que el servidor realmente conoce la clave (Autenticación mutua). |
 
+
+`MD5 || password || username`
 
 --- 
 
