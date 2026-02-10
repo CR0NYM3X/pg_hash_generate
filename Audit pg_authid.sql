@@ -22,7 +22,7 @@ WITH weak_passwords_dictionary AS (
     UNION
     
     -- 3. Diccionario Dinámico (Serie superbowl 1990 - superbowl 2026)
-    SELECT 'superbowl ' || year_val FROM generate_series(1990, 2026) AS year_val
+    SELECT 'America ' || year_val FROM generate_series(1990, 2026) AS year_val
 )
 SELECT 
     a.rolname AS username,
