@@ -35,7 +35,10 @@ SELECT
     CASE 
         WHEN a.rolsuper THEN 'CRITICAL'
         ELSE 'HIGH'
-    END AS risk_level
+    END AS risk_level,
+    rolsuper,
+    rolcanlogin,
+    rolvaliduntil
 FROM pg_authid a
 CROSS JOIN weak_passwords_dictionary d
 WHERE a.rolpassword IS NOT NULL
