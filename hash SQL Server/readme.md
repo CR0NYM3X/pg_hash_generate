@@ -12,17 +12,44 @@
 
 ---
 
-## Datos Interesantes (Fun Facts para el README)
+## Datos Interesantes 
 
 1. **Seguridad por Oscuridad:** Las funciones `PWDENCRYPT` y `PWDCOMPARE` de Microsoft no están documentadas oficialmente y se consideran "internas", aunque se han usado por décadas en sistemas .NET.
 2. **Longitud del Hash:** Un hash de SQL Server tipo `0x0200` siempre tendrá una longitud de **54 bytes** (2 bytes de encabezado + 4 bytes de sal + 48 bytes de hash SHA-512 truncado/específico) o hasta **128 bytes** dependiendo de la implementación del buffer.
 3. **Compatibilidad Multi-lenguaje:** Con esta implementación en PL/pgSQL, una aplicación escrita en Python, Go o Node.js puede validar usuarios migrados de SQL Server sin necesidad de librerías externas de criptografía de Windows.
 
 ---
+
+
+
+### 1. Los Encabezados Estándar
+
+* **`0x0100` (Legacy):** Utilizado en SQL Server 2000, 2005 y 2008. Se basa en el algoritmo **SHA-1**. Aunque es antiguo, muchas bases de datos migradas todavía lo conservan.
+* **`0x0200` (Moderno):** Introducido en SQL Server 2012 y utilizado en todas las versiones posteriores (2014, 2016, 2017, 2019, 2022). Utiliza **SHA-512**. Es el que validamos en tu imagen.
+
+
+### 2. Versiones "Raras" o de Transición
+
+Aunque no son comunes, existen estas variantes:
+
+* **`0x00` / Sin encabezado:** En versiones prehistóricas de SQL Server (v6.5 o anteriores), el hashing era mucho más simple y no incluía un encabezado de versión tan claro. No suelen sobrevivir en migraciones modernas.
+* **Azure SQL Edge:** En algunas implementaciones muy específicas de IoT o versiones ligeras, SQL Server puede comportarse de forma distinta, pero generalmente respeta el estándar `0x0200` para mantener la compatibilidad con ADO.NET.
+
  
 
-2. **Cargar funciones:** Ejecuta los archivos `.sql` en tu base de datos.
-3. **Validar un usuario migrado:**
+## Consideraciones para tu Repositorio
+
+Para que tu repositorio sea una referencia técnica de "grado senior", te sugiero incluir esta tabla comparativa en el `README.md`:
+
+| Header | Algoritmo | Versión SQL Server | Seguridad |
+| --- | --- | --- | --- |
+| **`0x0100`** | SHA-1 | 2000 - 2008 R2 | **Baja** (Vulnerable a colisiones) |
+| **`0x0200`** | SHA-512 | 2012 - 2022+ | **Alta** (Estándar actual) |
+
+
+
+
+## Ejemplo de uso  
 ```sql
 
 select * from pg_mssql_sha512_generate('Test123');
