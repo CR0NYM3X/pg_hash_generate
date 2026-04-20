@@ -56,7 +56,7 @@ Para que tu repositorio sea una referencia técnica de "grado senior", te sugier
 
 ## Ejemplo de uso  
 ```sql
-SELECT  * from  public.pg_mssql_sha512_generate('admin123', '0x0100');
+SELECT  * from  public.pg_mssql_generate('admin123', '0x0100');
 +--------------------------------------------------------+-----------+---------+------------+
 |                          hash                          | algorithm | version |    salt    |
 +--------------------------------------------------------+-----------+---------+------------+
@@ -65,7 +65,7 @@ SELECT  * from  public.pg_mssql_sha512_generate('admin123', '0x0100');
 (1 row)
 
 
-SELECT  * from public.pg_mssql_sha512_generate('admin123');
+SELECT  * from public.pg_mssql_generate('admin123');
 +-[ RECORD 1 ]-----------------------------------------------------------------------------------------------------------------------------------------------+
 | hash      | 0x0200FE95F1BBEC31DC1A25F596F9296941410077AF1636094B28DD2394BF469EFCE111548E9621D6DF3265D82E6BF880CC2E34BE6BCF445533DC6C55905D849B3D40B91A6C6E |
 | algorithm | SHA512                                                                                                                                         |
@@ -78,7 +78,7 @@ Time: 0.465 ms
 
 
 
-SELECT * FROM public.pg_mssql_sha512_verify('admin123', '0x01003667CAD7199125862BFB8B6A1593920D8A023607EF8E2C34');
+SELECT * FROM public.pg_mssql_verify('admin123', '0x01003667CAD7199125862BFB8B6A1593920D8A023607EF8E2C34');
 +----------+-----------+---------+------------+
 | is_valid | algorithm | version |    salt    |
 +----------+-----------+---------+------------+
@@ -89,7 +89,7 @@ SELECT * FROM public.pg_mssql_sha512_verify('admin123', '0x01003667CAD7199125862
 Time: 0.498 ms
 
 
-SELECT * FROM public.pg_mssql_sha512_verify('admin123', '0x0200FE95F1BBEC31DC1A25F596F9296941410077AF1636094B28DD2394BF469EFCE111548E9621D6DF3265D82E6BF880CC2E34BE6BCF445533DC6C55905D849B3D40B91A6C6E');
+SELECT * FROM public.pg_mssql_verify('admin123', '0x0200FE95F1BBEC31DC1A25F596F9296941410077AF1636094B28DD2394BF469EFCE111548E9621D6DF3265D82E6BF880CC2E34BE6BCF445533DC6C55905D849B3D40B91A6C6E');
 +----------+-----------+---------+------------+
 | is_valid | algorithm | version |    salt    |
 +----------+-----------+---------+------------+
