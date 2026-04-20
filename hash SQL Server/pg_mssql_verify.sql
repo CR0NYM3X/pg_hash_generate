@@ -1,6 +1,6 @@
 
 /*
- @Function: public.pg_mssql_sha512_verify
+ @Function: public.pg_mssql_verify
  @Creation Date: 15/02/2026
  @Description: Verifica una contraseña contra hashes de SQL Server (0x0100 y 0x0200).
                 Retorna metadatos detallados del proceso de validación.
@@ -16,9 +16,9 @@
 */
 
 ---------------- CODE ----------------
--- DROP FUNCTION public.pg_mssql_sha512_verify(text,text);
+-- DROP FUNCTION public.pg_mssql_verify(text,text);
 
-CREATE OR REPLACE FUNCTION public.pg_mssql_sha512_verify(
+CREATE OR REPLACE FUNCTION public.pg_mssql_verify(
     p_password_plain text, 
     p_password_hash_input text
 )
@@ -106,15 +106,15 @@ STRICT
 SECURITY DEFINER;
 
 -- Endurecimiento de Seguridad
-ALTER FUNCTION public.pg_mssql_sha512_verify(text, text) 
+ALTER FUNCTION public.pg_mssql_verify(text, text) 
 SET search_path TO public, pg_temp;
 
 -- Revocar permisos públicos por defecto
-REVOKE EXECUTE ON FUNCTION public.pg_mssql_sha512_verify(text, text) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.pg_mssql_verify(text, text) FROM PUBLIC;
 
 
 ---------------- COMMENT ----------------
-COMMENT ON FUNCTION public.pg_mssql_sha512_verify(text, text) IS
+COMMENT ON FUNCTION public.pg_mssql_verify(text, text) IS
 'Verificador de integridad de credenciales MSSQL.
 - Retorno: Registro con resultado booleano y desglose técnico del hash.
 - Algoritmos: Detecta SHA-1 (Legacy) y SHA-512 (Modern).
@@ -122,9 +122,9 @@ COMMENT ON FUNCTION public.pg_mssql_sha512_verify(text, text) IS
 
 
 --  SHA-1 Legacy <= 2008
--- SELECT * FROM public.pg_mssql_sha512_verify('admin123', '0x01003667CAD7199125862BFB8B6A1593920D8A023607EF8E2C34');
+-- SELECT * FROM public.pg_mssql_verify('admin123', '0x01003667CAD7199125862BFB8B6A1593920D8A023607EF8E2C34');
 
 --  SHA-512 >= 2012
--- SELECT * FROM public.pg_mssql_sha512_verify('admin123', '0x0200A894AC7FE5A69BF12B4A0FA57301D12A0EB6B6C59B8663EF916FC92E7DA2EF05FD07E687EAA1B68EA3F6CAF59219EB708EFB788AF2F8B61F79135B07FB4A33F35D8280E1');
+-- SELECT * FROM public.pg_mssql_verify('admin123', '0x0200A894AC7FE5A69BF12B4A0FA57301D12A0EB6B6C59B8663EF916FC92E7DA2EF05FD07E687EAA1B68EA3F6CAF59219EB708EFB788AF2F8B61F79135B07FB4A33F35D8280E1');
 
  
