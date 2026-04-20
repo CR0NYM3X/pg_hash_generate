@@ -1,7 +1,7 @@
 
 
 /*
- @Function: public.pg_mssql_sha512_generate
+ @Function: public.pg_mssql_generate
  @Creation Date: 15/02/2026
  @Description: Genera hashes compatibles con Microsoft SQL Server. 
                 Soporta formato moderno (0x0200 - SHA512) y antiguo (0x0100 - SHA1).
@@ -18,9 +18,9 @@
  create EXTENSION pgcrypto ;
 
 ---------------- CODE ----------------
--- DROP FUNCTION public.pg_mssql_sha512_generate(TEXT,TEXT);
+-- DROP FUNCTION public.pg_mssql_generate(TEXT,TEXT);
 
-CREATE OR REPLACE FUNCTION public.pg_mssql_sha512_generate(
+CREATE OR REPLACE FUNCTION public.pg_mssql_generate(
     p_password text,
     p_version  text DEFAULT '0x0200'
 )
@@ -81,17 +81,17 @@ STABLE
 SECURITY DEFINER;
 
 -- Ajuste de seguridad search_path (Obligatorio para SECURITY DEFINER)
-ALTER FUNCTION public.pg_mssql_sha512_generate(text, text) 
+ALTER FUNCTION public.pg_mssql_generate(text, text) 
 SET search_path TO public, pg_temp;
 
 -- Revocar permisos públicos
-REVOKE EXECUTE ON FUNCTION public.pg_mssql_sha512_generate(text, text) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.pg_mssql_generate(text, text) FROM PUBLIC;
 
  
 
 
 ---------------- COMMENT ----------------
-COMMENT ON FUNCTION public.pg_mssql_sha512_generate(text, text) IS
+COMMENT ON FUNCTION public.pg_mssql_generate(text, text) IS
 'Genera hashes estilo MSSQL para migración de credenciales.
 - Parámetros: p_password (texto), p_version (0x0200=SHA512, 0x0100=SHA1)
 - Retorno: text (hexadecimal prefijado con 0x)
@@ -100,16 +100,16 @@ COMMENT ON FUNCTION public.pg_mssql_sha512_generate(text, text) IS
 - Notas: Requiere extensión pgcrypto y helper text_to_utf16le.';
 
 
-REVOKE ALL ON FUNCTION public.pg_mssql_sha512_generate(text, text) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.pg_mssql_generate(text, text) FROM PUBLIC;
 
 
 ---------------- EXAMPLE USAGE ----------------
 -- Generar hash moderno (Default - SQL 2012+)
--- SELECT  * from  public.pg_mssql_sha512_generate('admin123'); 
+-- SELECT  * from  public.pg_mssql_generate('admin123'); 
 
 
 -- Generar hash antiguo (SQL 2000/2005/2008)
--- SELECT  * from  public.pg_mssql_sha512_generate('admin123', '0x0100');
+-- SELECT  * from  public.pg_mssql_generate('admin123', '0x0100');
 
 
 
