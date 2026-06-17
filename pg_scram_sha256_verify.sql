@@ -14,7 +14,8 @@
  @Author: CR0NYM3X
 */
 
-create EXTENSION pgcrypto ;
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 
 -- DROP FUNCTION public.pg_scram_sha256_verify(text, text);
 CREATE OR REPLACE FUNCTION public.pg_scram_sha256_verify(
