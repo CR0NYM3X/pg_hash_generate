@@ -15,7 +15,7 @@
  @Change: Se añade soporte paramétrico para versiones antiguas (SHA1) = 0x0100  y modernas (SHA512) = 0x0200.
  @Author: CR0NYM3X
 */
- create EXTENSION pgcrypto ;
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 ---------------- CODE ----------------
 -- DROP FUNCTION public.pg_mssql_generate(TEXT,TEXT);
