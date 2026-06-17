@@ -3,9 +3,10 @@
 - Instalar extensión pgcrypto 
 
 ```
-psql -f text_to_utf16le.sql
-psql -f pg_mssql_generate.sql
-psql -f pg_mssql_verify.sql
+psql -d postgres -c "CREATE EXTENSION pgcrypto;"
+psql -d postgres -f text_to_utf16le.sql
+psql -d postgres -f pg_mssql_generate.sql
+psql -d postgres -f pg_mssql_verify.sql
 ```
 
 ## Consideraciones Técnicas  
