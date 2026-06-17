@@ -2,7 +2,11 @@
 - Instalar función text_to_utf16le.sql
 - Instalar extensión pgcrypto 
 
-
+```
+psql -f text_to_utf16le.sql
+psql -f pg_mssql_generate.sql
+psql -f pg_mssql_verify.sql
+```
 
 ## Consideraciones Técnicas  
 
